@@ -1,5 +1,6 @@
 package br.ufscar.dc.dsw.gametest.entities;
 
+import br.ufscar.dc.dsw.gametest.enums.SessionState;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -26,5 +27,70 @@ public class SessionsEntity {
     private LocalDateTime started_at;
     @Column
     private LocalDateTime ended_at;
+    @Column(nullable = false)
+    private SessionState status;
 
+    public List<UserEntity> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<UserEntity> members) {
+        this.members = members;
+    }
+
+    public ProjectEntity getProject() {
+        return project;
+    }
+
+    public void setProject(ProjectEntity project) {
+        this.project = project;
+    }
+
+    public StrategyEntity getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(StrategyEntity strategy) {
+        this.strategy = strategy;
+    }
+
+    public int getTime_minutes() {
+        return time_minutes;
+    }
+
+    public void setTime_minutes(int time_minutes) {
+        this.time_minutes = time_minutes;
+    }
+
+    public SessionState getStatus() {
+        return status;
+    }
+
+    public void setStatus(SessionState status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getEnded_at() {
+        return ended_at;
+    }
+
+    public void setEnded_at(LocalDateTime ended_at) {
+        this.ended_at = ended_at;
+    }
+
+    public LocalDateTime getStarted_at() {
+        return started_at;
+    }
+
+    public void setStarted_at(LocalDateTime started_at) {
+        this.started_at = started_at;
+    }
+
+    public LocalDateTime getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(LocalDateTime created_at) {
+        this.created_at = created_at;
+    }
 }

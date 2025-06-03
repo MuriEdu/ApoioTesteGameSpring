@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sessions List</title>
+    <!-- Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+<div th:replace="fragments/header :: mainHeader"></div>
+<div class="container">
+    <h4 class="center-align">Sessions</h4>
+    <!-- Create Session Button -->
+    <div class="right-align" style="margin-bottom: 20px;" th:if="${#authorization.expression('isAuthenticated()')}">
+        <a class="btn waves-effect waves-light green" th:href="@{/sessions/new}">
+            <i class="material-icons left">add</i>Nova Sessão
+        </a>
+    </div>
+    <!-- Empty message -->
+    <div class="card-panel yellow lighten-4 center-align" th:if="${sessions.empty}">
+        <span class="black-text">Não há sessões cadastradas.</span>
+    </div>
+
+    <!-- Sessions table -->
+    <table class="highlight responsive-table" th:if="${not sessions.empty}">
+        <thead>
+        <tr>
+            <th>Projeto</th>
+            <th>Estratégia</th>
+            <th>Membros</th>
+            <th>Tempo (min)</th>
+            <th>Criado em</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="session : ${sessions}">
+            <td th:text="${session.project.name}">Nome do Projeto</td>
+            <td th:text="${session.strategy.name}">Nome da Estratégia</td>
+            <td>
+                <ul>
+                    <li th:each="member : ${session.members}" th:text="${member.name}">Nome do Membro</li>
+                </ul>
+            </td>
+            <td th:text="${session.time_minutes}">Tempo</td>
+            <td th:text="${#temporals.format(session.created_at, 'dd/MM/yyyy HH:mm')}">Data</td>
+
+            <!-- Status -->
+            <td>
+                <span th:switch="${session.status}">
+                    <span th:case="'CREATED'" class="new badge blue" data-badge-caption="Criada"></span>
+                    <span th:case="'IN_PROGRESS'" class="new badge orange" data-badge-caption="Em andamento"></span>
+                    <span th:case="'FINISHED'" class="new badge green" data-badge-caption="Finalizada"></span>
+                    <span th:case="*">Desconhecido</span>
+                </span>
+            </td>
+
+            <!-- Ações -->
+            <td>
+                <a class="btn red lighten-1 tooltipped" data-tooltip="Reportar Bug"
+                   th:href="@{/sessions/{id}/bug(id=${session.id})}">
+                    <i class="material-icons">bug_report</i>
+                </a>
+                <a class="btn blue lighten-1 tooltipped" data-tooltip="Editar Sessão"
+                   th:href="@{/sessions/{id}/edit(id=${session.id})}">
+                    <i class="material-icons">edit</i>
+                </a>
+                <a class="btn green lighten-1 tooltipped" data-tooltip="Iniciar Sessão"
+                   th:href="@{/sessions/{id}/start(id=${session.id})}">
+                    <i class="material-icons">play_arrow</i>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Materialize JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const elems = document.querySelectorAll('.tooltipped');
+        M.Tooltip.init(elems);
+    });
+</script>
+</body>
+</html>

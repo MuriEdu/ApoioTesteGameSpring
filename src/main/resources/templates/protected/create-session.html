@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Criar Sessão</title>
+  <!-- Materialize CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+<div th:replace="fragments/header :: mainHeader"></div>
+<div class="container">
+  <h4 class="center-align">Criar Sessão</h4>
+
+  <form th:action="@{/sessions}" method="post">
+    <!-- Projeto -->
+    <div class="input-field">
+      <select name="project_id" required>
+        <option value="" disabled selected>Selecione um projeto</option>
+        <option th:each="project : ${projects}"
+                th:value="${project.id}"
+                th:text="${project.name}">
+        </option>
+      </select>
+      <label>Projeto</label>
+    </div>
+
+    <!-- Estratégia -->
+    <div class="input-field">
+      <select name="strategy_id" required>
+        <option value="" disabled selected>Selecione uma estratégia</option>
+        <option th:each="strategy : ${strategies}"
+                th:value="${strategy.id}"
+                th:text="${strategy.name}">
+        </option>
+      </select>
+      <label>Estratégia</label>
+    </div>
+
+    <!-- Membros -->
+    <div class="input-field">
+      <select name="members" multiple id="members-select" required>
+        <option th:each="member : ${members}"
+                th:value="${member.id}"
+                th:text="${member.name}">
+        </option>
+      </select>
+      <label>Membros (máximo 3)</label>
+      <span class="helper-text red-text" id="member-limit-msg" style="display:none;">Você pode selecionar no máximo 3 membros.</span>
+    </div>
+
+    <!-- Submit -->
+    <div class="center-align" style="margin-top: 30px;">
+      <button type="submit" class="btn green">
+        <i class="material-icons left">check</i>Criar Sessão
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Materialize JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Initialize all selects
+    const selects = document.querySelectorAll('select');
+    M.FormSelect.init(selects);
+
+    // Limit members selection to 3
+    const memberSelect = document.getElementById('members-select');
+    memberSelect.addEventListener('change', function () {
+      const instance = M.FormSelect.getInstance(memberSelect);
+      const selected = instance.getSelectedValues();
+
+      if (selected.length > 3) {
+        // Remove last selected item
+        selected.pop();
+        Array.from(memberSelect.options).forEach(option => {
+          option.selected = selected.includes(option.value);
+        });
+        M.FormSelect.init(memberSelect); // Re-initialize
+        document.getElementById('member-limit-msg').style.display = 'inline';
+      } else {
+        document.getElementById('member-limit-msg').style.display = 'none';
+      }
+    });
+  });
+</script>
+</body>
+</html>

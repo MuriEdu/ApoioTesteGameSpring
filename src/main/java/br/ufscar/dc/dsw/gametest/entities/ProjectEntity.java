@@ -20,4 +20,16 @@ public class ProjectEntity {
     private LocalDateTime createdAt;
     @ManyToMany
     private List<UserEntity> members;
+
+    public ProjectEntity(int id, String name, LocalDateTime createdAt, String description, List<UserEntity> members) {
+        this.id = id;
+        this.name = name;
+        this.createdAt = createdAt;
+        this.description = description;
+        this.members = members;
+    }
+
+    public ProjectEntity() {
+
+    }
 }

@@ -16,4 +16,12 @@ public class StrategyEntity {
     @Column
     private String tips;
     private List<String> images;
+
+    public StrategyEntity(Long id, String name, String description, String tips, List<String> images) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.tips = tips;
+        this.images = images;
+    }
 }
