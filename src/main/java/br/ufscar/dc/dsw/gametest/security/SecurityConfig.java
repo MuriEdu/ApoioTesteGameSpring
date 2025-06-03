@@ -30,7 +30,7 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/test/admin", true) // Redirecionamento após login com sucesso
+                        .defaultSuccessUrl("/home", true) // Redirecionamento após login com sucesso
                         .permitAll()
                 )
                 .logout(logout -> logout

@@ -5,7 +5,6 @@
     <title>Login</title>
     <!-- Materialize CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"/>
-    <link rel="stylesheet" href="/css/style.css"/>
 </head>
 <body class="blue-grey lighten-5">
 <div class="container">
@@ -14,9 +13,9 @@
             <div class="card">
                 <div class="card-content">
                     <span class="card-title center-align">Login</span>
-                    <form method="post" th:action="@{/login}">
+                    <form method="post" th:action="@{/login}" onsubmit="return validateEmail()">
                         <div class="input-field">
-                            <input id="username" name="username" type="text" class="validate" required>
+                            <input id="username" name="username" type="email" class="validate" required>
                             <label for="username">Email</label>
                         </div>
                         <div class="input-field">
@@ -33,7 +32,40 @@
     </div>
 </div>
 
+<!-- Snackbar container -->
+<div id="snackbar" class="card-panel red lighten-1 white-text center-align" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000;">
+    Credenciais inválidas
+</div>
+
 <!-- Materialize JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+<script>
+    // Exibe snackbar se houver erro
+    document.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('error')) {
+            const snackbar = document.getElementById('snackbar');
+            snackbar.style.display = 'block';
+            setTimeout(() => {
+                snackbar.style.display = 'none';
+            }, 3000);
+        }
+    });
+
+    // Validação de e-mail
+    function validateEmail() {
+        const emailInput = document.getElementById('username');
+        const email = emailInput.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) {
+            M.toast({html: 'Email inválido', classes: 'red'});
+            emailInput.focus();
+            return false;
+        }
+        return true;
+    }
+</script>
 </body>
 </html>
