@@ -1,5 +1,6 @@
 package br.ufscar.dc.dsw.gametest.entities;
 
+import br.ufscar.dc.dsw.gametest.utils.ListToJsonConverter;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -15,6 +16,8 @@ public class StrategyEntity {
     private String description;
     @Column
     private String tips;
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = ListToJsonConverter.class)
     private List<String> images;
 
     public StrategyEntity(Long id, String name, String description, String tips, List<String> images) {
@@ -22,6 +25,46 @@ public class StrategyEntity {
         this.name = name;
         this.description = description;
         this.tips = tips;
+        this.images = images;
+    }
+
+    public StrategyEntity() {
+
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getTips() {
+        return tips;
+    }
+
+    public void setTips(String tips) {
+        this.tips = tips;
+    }
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
         this.images = images;
     }
 }

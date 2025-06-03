@@ -38,10 +38,10 @@ public class SessionRepository {
                 .filter(session -> session.getStatus() == status)
                 .toList();
     }
-//
-//    public List<SessionsEntity> findByProjectId(Long projectId) {
-//        return sessionDAO.findAll().stream()
-//                .filter(session -> session.getProject() != null && session.getProject().getId() == projectId)
-//                .toList();
-//    }
+
+    public List<SessionsEntity> findByProjectId(Long projectId) {
+        return sessionDAO.findAll().stream()
+                .filter(session -> session.getProject() != null && session.getProject().getId() == projectId)
+                .toList();
+    }
 }

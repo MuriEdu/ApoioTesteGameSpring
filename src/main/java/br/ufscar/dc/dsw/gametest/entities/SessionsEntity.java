@@ -3,6 +3,7 @@ package br.ufscar.dc.dsw.gametest.entities;
 import br.ufscar.dc.dsw.gametest.enums.SessionState;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,8 +13,6 @@ public class SessionsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @OneToMany
-    private List<UserEntity> members;
     @OneToOne
     private ProjectEntity project;
     @OneToOne
@@ -27,16 +26,11 @@ public class SessionsEntity {
     private LocalDateTime started_at;
     @Column
     private LocalDateTime ended_at;
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private SessionState status;
 
-    public List<UserEntity> getMembers() {
-        return members;
-    }
 
-    public void setMembers(List<UserEntity> members) {
-        this.members = members;
-    }
 
     public ProjectEntity getProject() {
         return project;
@@ -92,5 +86,9 @@ public class SessionsEntity {
 
     public void setCreated_at(LocalDateTime created_at) {
         this.created_at = created_at;
+    }
+
+    public long getId() {
+        return id;
     }
 }

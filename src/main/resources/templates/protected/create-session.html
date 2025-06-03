@@ -3,10 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <title>Criar Sessão</title>
+
   <!-- Materialize CSS -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
   <!-- Material Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Select2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+  <style>
+    /* Match Select2 dropdown to Materialize */
+    .select2-container .select2-selection--single {
+      height: 3rem;
+      line-height: 3rem;
+      border: none;
+      border-bottom: 1px solid #9e9e9e;
+      border-radius: 0;
+      box-shadow: none;
+      font-size: 16px;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+      color: #444;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+      height: 3rem;
+      right: 0;
+    }
+
+    .select2-dropdown {
+      border-radius: 0 0 4px 4px;
+    }
+
+    /* Label positioning like Materialize */
+    .select-label {
+      position: absolute;
+      top: -14px;
+      font-size: 0.8rem;
+      color: #9e9e9e;
+    }
+
+    .select-field {
+      position: relative;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+  </style>
 </head>
 <body>
 <div th:replace="fragments/header :: mainHeader"></div>
@@ -15,43 +60,36 @@
 
   <form th:action="@{/sessions}" method="post">
     <!-- Projeto -->
-    <div class="input-field">
-      <select name="project_id" required>
-        <option value="" disabled selected>Selecione um projeto</option>
+    <div class="select-field">
+      <label class="select-label">Projeto</label>
+      <select name="project_id" class="select2" required>
         <option th:each="project : ${projects}"
-                th:value="${project.id}"
-                th:text="${project.name}">
+                th:value="${project.getId()}"
+                th:text="${project.getName()}">
         </option>
       </select>
-      <label>Projeto</label>
     </div>
 
     <!-- Estratégia -->
-    <div class="input-field">
-      <select name="strategy_id" required>
-        <option value="" disabled selected>Selecione uma estratégia</option>
+    <div class="select-field">
+      <label class="select-label">Estratégia</label>
+      <select name="strategy_id" class="select2" required>
         <option th:each="strategy : ${strategies}"
-                th:value="${strategy.id}"
-                th:text="${strategy.name}">
+                th:value="${strategy.getId()}"
+                th:text="${strategy.getName()}">
         </option>
       </select>
-      <label>Estratégia</label>
     </div>
 
-    <!-- Membros -->
+    <!-- Duration -->
     <div class="input-field">
-      <select name="members" multiple id="members-select" required>
-        <option th:each="member : ${members}"
-                th:value="${member.id}"
-                th:text="${member.name}">
-        </option>
-      </select>
-      <label>Membros (máximo 3)</label>
-      <span class="helper-text red-text" id="member-limit-msg" style="display:none;">Você pode selecionar no máximo 3 membros.</span>
+      <input id="duration" type="number" name="duration" min="1" required>
+      <label for="duration">Duration Time (mins)</label>
     </div>
 
     <!-- Submit -->
     <div class="center-align" style="margin-top: 30px;">
+      <p id="validation-error" class="red-text center-align" style="display: none;">Por favor, selecione um projeto e uma estratégia.</p>
       <button type="submit" class="btn green">
         <i class="material-icons left">check</i>Criar Sessão
       </button>
@@ -59,31 +97,17 @@
   </form>
 </div>
 
-<!-- Materialize JS -->
+<!-- jQuery and JS Libraries -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    // Initialize all selects
-    const selects = document.querySelectorAll('select');
-    M.FormSelect.init(selects);
-
-    // Limit members selection to 3
-    const memberSelect = document.getElementById('members-select');
-    memberSelect.addEventListener('change', function () {
-      const instance = M.FormSelect.getInstance(memberSelect);
-      const selected = instance.getSelectedValues();
-
-      if (selected.length > 3) {
-        // Remove last selected item
-        selected.pop();
-        Array.from(memberSelect.options).forEach(option => {
-          option.selected = selected.includes(option.value);
-        });
-        M.FormSelect.init(memberSelect); // Re-initialize
-        document.getElementById('member-limit-msg').style.display = 'inline';
-      } else {
-        document.getElementById('member-limit-msg').style.display = 'none';
-      }
+  $(document).ready(function () {
+    $('.select2').select2({
+      width: '100%',
+      placeholder: 'Selecione uma opção',
+      allowClear: false
     });
   });
 </script>

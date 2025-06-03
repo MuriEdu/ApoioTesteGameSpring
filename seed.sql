@@ -1,15 +1,11 @@
--- Inserção de exemplos na tabela project_tb
--- Supondo que 'id' é AUTO_INCREMENT
-
+-- Inserção de projetos
 INSERT INTO project_tb (name, description, created_at)
 VALUES
     ('Projeto Alpha', 'Primeiro projeto de exemplo', NOW()),
     ('Projeto Beta', 'Segundo projeto de exemplo', NOW()),
     ('Projeto Gama', 'Terceiro projeto de exemplo', NOW());
 
--- Inserção de exemplos na tabela strategy_tb
--- O campo 'images' é do tipo TEXT contendo uma string JSON
-
+-- Inserção de estratégias
 INSERT INTO strategy_tb (name, description, tips, images)
 VALUES
     (
@@ -30,3 +26,18 @@ VALUES
         'Concentre-se em regiões elevadas e cruzamentos estratégicos.',
         JSON_ARRAY('https://cdn.example.com/images/area1.jpg', 'https://cdn.example.com/images/area2.jpg')
     );
+
+INSERT INTO project_tb_members (project_tb_id, members_id) VALUES
+     -- Projeto Alpha: admin + Et Bilu
+     (1, 1),
+     (1, 2),
+
+     -- Projeto Beta: Arnold + Mickey
+     (2, 3),
+     (2, 4),
+
+     -- Projeto Gama: todos
+     (3, 1),
+     (3, 2),
+     (3, 3),
+     (3, 4);
