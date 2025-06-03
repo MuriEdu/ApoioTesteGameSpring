@@ -31,6 +31,10 @@ public class CustomUserDetails implements UserDetails {
         return user.getEmail(); // authentication will be by email
     }
 
+    public String getFullName() {
+        return user.getName();
+    }
+
     @Override public boolean isAccountNonExpired() { return true; }
     @Override public boolean isAccountNonLocked() { return true; }
     @Override public boolean isCredentialsNonExpired() { return true; }

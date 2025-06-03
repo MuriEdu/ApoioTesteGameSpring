@@ -1,0 +1,44 @@
+<!-- fragments/header.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+
+<!-- Fragmento do header -->
+<nav th:fragment="mainHeader">
+    <div class="nav-wrapper teal">
+        <a href="#" class="brand-logo" style="padding-left: 15px;">Game Testing</a>
+
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+
+            <!-- Verifica se o usuário está autenticado -->
+            <li th:if="${#authorization.expression('isAuthenticated()')}">
+                <span style="color: white; margin-right: 10px;" th:text="'Olá, ' + ${#authentication.principal.fullName}">Olá, Usuário</span>
+            </li>
+
+            <li th:if="${#authorization.expression('!isAuthenticated()')}">
+                <span style="color: white; margin-right: 10px;">Olá, Visitante</span>
+            </li>
+
+            <!-- Botão de logout -->
+            <li th:if="${#authorization.expression('isAuthenticated()')}">
+                <form th:action="@{/logout}" method="post" style="margin: 0;">
+                    <button type="submit" class="btn red lighten-1" style="margin-right: 16px;">
+                        Logout
+                    </button>
+                </form>
+            </li>
+
+            <!-- Botão de login -->
+            <li th:if="${#authorization.expression('!isAuthenticated()')}">
+                <a th:href="@{/login}" class="btn green lighten-1" style="margin-right: 16px;">
+                    Login
+                </a>
+            </li>
+
+        </ul>
+    </div>
+</nav>
+
+</body>
+</html>
