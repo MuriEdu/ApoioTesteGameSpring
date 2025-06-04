@@ -7,18 +7,25 @@ import java.util.List;
 
 @Entity(name = "strategy_tb")
 public class StrategyEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private String name;
+
     @Column
     private String description;
+
     @Column
     private String tips;
+
     @Column(columnDefinition = "TEXT")
     @Convert(converter = ListToJsonConverter.class)
     private List<String> images;
+
+    public StrategyEntity() {}
 
     public StrategyEntity(Long id, String name, String description, String tips, List<String> images) {
         this.id = id;
@@ -28,43 +35,18 @@ public class StrategyEntity {
         this.images = images;
     }
 
-    public StrategyEntity() {
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public Long getId() {
-        return id;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public String getName() {
-        return name;
-    }
+    public String getTips() { return tips; }
+    public void setTips(String tips) { this.tips = tips; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getTips() {
-        return tips;
-    }
-
-    public void setTips(String tips) {
-        this.tips = tips;
-    }
-
-    public List<String> getImages() {
-        return images;
-    }
-
-    public void setImages(List<String> images) {
-        this.images = images;
-    }
+    public List<String> getImages() { return images; }
+    public void setImages(List<String> images) { this.images = images; }
 }

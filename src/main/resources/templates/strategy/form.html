@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${strategy.id != null} ? 'Editar Estratégia' : 'Nova Estratégia'">Formulário</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+</head>
+<body class="blue-grey lighten-5">
+
+<div th:replace="fragments/header :: mainHeader"></div>
+
+<div class="container" style="margin-top: 30px;">
+    <h4 th:text="${strategy.id != null} ? 'Editar Estratégia' : 'Nova Estratégia'"></h4>
+
+    <form th:action="@{/strategies}" th:object="${strategy}" method="post" class="card-panel white z-depth-2">
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="input-field">
+            <input id="name" type="text" th:field="*{name}" required />
+            <label for="name">Nome</label>
+        </div>
+
+        <div class="input-field">
+            <textarea id="description" class="materialize-textarea" th:field="*{description}" required></textarea>
+            <label for="description">Descrição</label>
+        </div>
+
+        <div class="input-field">
+            <textarea id="tips" class="materialize-textarea" th:field="*{tips}"></textarea>
+            <label for="tips">Dicas</label>
+        </div>
+
+        <div class="input-field">
+            <textarea id="images" class="materialize-textarea" th:field="*{images}"
+                      placeholder='["https://url1.com", "https://url2.com"]'></textarea>
+            <label for="images">Imagens (JSON)</label>
+        </div>
+
+        <div class="right-align">
+            <button type="submit" class="btn green">Salvar</button>
+            <a href="/strategies" class="btn grey">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        M.updateTextFields(); // ativa os labels para campos com valores
+    });
+</script>
+
+</body>
+</html>
