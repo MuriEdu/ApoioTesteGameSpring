@@ -14,8 +14,10 @@ public class SessionsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @OneToOne
+    @JoinColumn(name = "project_tb_id")
     private ProjectEntity project;
     @OneToOne
+    @JoinColumn(name = "strategy_tb_id")
     private StrategyEntity strategy;
     @Column(nullable = false)
     private int time_minutes;

@@ -7,35 +7,38 @@
 
 <!-- Header fixo -->
 <div class="navbar-fixed" th:fragment="mainHeader">
-    <nav class="teal">
-        <div class="nav-wrapper container">
-            <a href="/" class="brand-logo" style="padding-left: 10px;">Game Testing</a>
+    <!-- Fragmento do header -->
+    <nav th:fragment="mainHeader">
+        <div class="nav-wrapper teal">
+            <a href="#" class="brand-logo" style="padding-left: 15px;">Game Testing</a>
 
             <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <!-- Saudação -->
+
+                <!-- Verifica se o usuário está autenticado -->
                 <li th:if="${#authorization.expression('isAuthenticated()')}">
-                    <span style="color: white; margin-right: 15px;"
-                          th:text="'Olá, ' + ${#authentication.principal.fullName}">Olá, Usuário</span>
-                </li>
-                <li th:if="${#authorization.expression('!isAuthenticated()')}">
-                    <span style="color: white; margin-right: 15px;">Olá, Visitante</span>
+                    <span style="color: white; margin-right: 10px;" th:text="'Olá, ' + ${#authentication.principal.fullName}">Olá, Usuário</span>
                 </li>
 
-                <!-- Botão de Logout -->
+                <li th:if="${#authorization.expression('!isAuthenticated()')}">
+                    <span style="color: white; margin-right: 10px;">Olá, Visitante</span>
+                </li>
+
+                <!-- Botão de logout -->
                 <li th:if="${#authorization.expression('isAuthenticated()')}">
                     <form th:action="@{/logout}" method="post" style="margin: 0;">
-                        <button type="submit" class="btn red" style="margin-top: 10px;">
+                        <button type="submit" class="btn red lighten-1" style="margin-right: 16px;">
                             Logout
                         </button>
                     </form>
                 </li>
 
-                <!-- Botão de Login -->
+                <!-- Botão de login -->
                 <li th:if="${#authorization.expression('!isAuthenticated()')}">
-                    <a th:href="@{/login}" class="btn green" style="margin-top: 10px;">
+                    <a th:href="@{/login}" class="btn green lighten-1" style="margin-right: 16px;">
                         Login
                     </a>
                 </li>
+
             </ul>
         </div>
     </nav>

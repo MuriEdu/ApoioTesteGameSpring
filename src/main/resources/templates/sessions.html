@@ -13,16 +13,21 @@
 <div class="container">
     <h4 class="center-align">Sessions</h4>
     <!-- Create Session Button -->
-    <div class="right-align" style="margin-bottom: 20px;" th:if="${#authorization.expression('isAuthenticated()')}">
-        <a class="btn waves-effect waves-light green" th:href="@{/sessions/new}">
-            <i class="material-icons left">add</i>Nova Sessão
-        </a>
+    <div class="row">
+        <div class="col s6 left-align">
+            <a th:href="@{/home}" class="btn grey darken-2">← Voltar para Home</a>
+        </div>
+        <div class="right-align" style="margin-bottom: 20px;" th:if="${#authorization.expression('isAuthenticated()')}">
+            <a class="btn waves-effect waves-light green" th:href="@{/sessions/new}">
+                <i class="material-icons left">add</i>Nova Sessão
+            </a>
+        </div>
     </div>
+
     <!-- Empty message -->
     <div class="card-panel yellow lighten-4 center-align" th:if="${testSessions.empty}">
         <span class="black-text">Não há sessões cadastradas.</span>
     </div>
-
     <!-- Sessions table -->
     <table class="highlight responsive-table" th:if="${not testSessions.empty}">
         <thead>
@@ -37,8 +42,8 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="testSession : ${testSessions}">
-            <td th:text="${testSession.project.name}">Nome do Projeto</td>
+        <tr th:each="testSession : ${testSessions}" th:attr="data-session-id=${testSession.id}">
+        <td th:text="${testSession.project.name}">Nome do Projeto</td>
             <td th:text="${testSession.strategy.name}">Nome da Estratégia</td>
             <td>
                 <ul>
@@ -50,13 +55,14 @@
 
             <!-- Status -->
             <td>
-                <span th:switch="${testSession.status}">
+                <span th:switch="${testSession.status.name()}">
                     <span th:case="'CREATED'" class="new badge blue" data-badge-caption="Criada"></span>
                     <span th:case="'IN_PROGRESS'" class="new badge orange" data-badge-caption="Em andamento"></span>
                     <span th:case="'FINISHED'" class="new badge green" data-badge-caption="Finalizada"></span>
                     <span th:case="*">Desconhecido</span>
                 </span>
             </td>
+
 
             <!-- Ações -->
             <td>
@@ -68,14 +74,19 @@
                    th:href="@{/sessions/{id}/edit(id=${testSession.id})}">
                     <i class="material-icons">edit</i>
                 </a>
-                <a class="btn green lighten-1 tooltipped" data-tooltip="Iniciar Sessão"
-                   th:href="@{/sessions/{id}/start(id=${testSession.id})}">
+                <a class="btn green lighten-1 tooltipped"
+                   data-tooltip="Iniciar Sessão"
+                   href="#!"
+                   th:onclick="'startTimer(' + ${testSession.id} + ', ' + (${testSession.time_minutes} * 60) + ')'">
                     <i class="material-icons">play_arrow</i>
                 </a>
+
+
             </td>
         </tr>
         </tbody>
     </table>
+
 </div>
 
 <!-- Materialize JS -->
@@ -84,6 +95,109 @@
     document.addEventListener('DOMContentLoaded', function () {
         const elems = document.querySelectorAll('.tooltipped');
         M.Tooltip.init(elems);
+    });
+
+    // Function to update the session status on the server
+    async function updateSessionStatus(sessionId, status) {
+        const response = await fetch(`/sessions/${sessionId}/status`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({status})
+        });
+        return response.ok;
+    }
+
+    // Function to get session remaining time and status from backend
+    async function getSessionStatus(sessionId) {
+        const response = await fetch(`/sessions/${sessionId}/status`);
+        if (response.ok) {
+            return await response.json(); // expected { status: "IN_PROGRESS", remainingSeconds: 300 }
+        }
+        return null;
+    }
+
+    // Function to start the timer client-side
+    function startCountdown(sessionId, totalSeconds) {
+        let remaining = totalSeconds;
+
+        // Update the timer display and status badge
+        function updateUI() {
+            const row = document.querySelector(`tr[data-session-id="${sessionId}"]`);
+            if (!row) return;
+
+
+            // Show remaining time (you can adjust this to your preferred location)
+            let timerCell = row.querySelector('.timer-display');
+            if (!timerCell) {
+                timerCell = document.createElement('td');
+                timerCell.classList.add('timer-display');
+                row.appendChild(timerCell);
+            }
+            timerCell.textContent = `Tempo restante: ${Math.floor(remaining / 60)}m ${remaining % 60}s`;
+        }
+
+        updateUI();
+
+        const intervalId = setInterval(() => {
+            remaining--;
+            if (remaining <= 0) {
+                clearInterval(intervalId);
+                updateSessionStatus(sessionId, 'FINISHED').then(() => {
+                    // Update UI to finished
+                    const row = document.querySelector(`tr[data-session-id="${sessionId}"]`);
+                    if (row) {
+                        const statusCell = row.querySelector('td:nth-child(6) span');
+                        if (statusCell) {
+                            statusCell.className = 'new badge green';
+                            statusCell.setAttribute('data-badge-caption', 'Finalizada');
+                        }
+                        // Remove timer display or mark done
+                        const timerCell = row.querySelector('.timer-display');
+                        if (timerCell) timerCell.textContent = 'Sessão finalizada';
+                    }
+                });
+                location.reload();
+            } else {
+                updateUI();
+            }
+        }, 1000);
+    }
+
+    // Called on Play button click
+    function startTimer(sessionId, durationSeconds) {
+        fetch(`/sessions/${sessionId}/status`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'IN_PROGRESS' })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text || 'Erro ao iniciar sessão'); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                location.reload();
+            })
+            .catch(error => {
+                alert(error.message);
+                console.error('Error starting session:', error);
+            });
+    }
+
+
+    // On page load, check for any sessions in progress and resume their timers
+    document.addEventListener('DOMContentLoaded', async () => {
+        const sessionRows = document.querySelectorAll('tbody tr');
+        for (const row of sessionRows) {
+            const sessionId = row.getAttribute('data-session-id');
+            if (!sessionId) continue;
+
+            const sessionStatus = await getSessionStatus(sessionId);
+            if (sessionStatus && sessionStatus.status === 'IN_PROGRESS') {
+                startCountdown(sessionId, sessionStatus.remainingSeconds);
+            }
+        }
     });
 </script>
 </body>

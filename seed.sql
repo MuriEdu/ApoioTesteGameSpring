@@ -12,19 +12,19 @@ VALUES
         'Defesa de Torres',
         'Estratégia baseada na proteção de pontos estratégicos.',
         'Construa torres em gargalos e rotas obrigatórias.',
-        JSON_ARRAY('https://cdn.example.com/images/tower1.jpg', 'https://cdn.example.com/images/tower2.jpg')
+        JSON_ARRAY('https://a-static.mlcdn.com.br/1500x1500/jogo-jenga-novo-hasbro/magazineluiza/080256000/d397d30d406fff5f48d5df530f2e45ba.jpg')
     ),
     (
         'Ataque Relâmpago',
         'Movimentação rápida para surpreender o inimigo.',
         'Utilize unidades leves e rápidas no início da partida.',
-        JSON_ARRAY('https://cdn.example.com/images/rush1.jpg', 'https://cdn.example.com/images/rush2.jpg')
+        JSON_ARRAY('https://pbs.twimg.com/profile_images/832334977039794177/KhQsLe1-_400x400.jpg')
     ),
     (
         'Controle de Área',
         'Tomar o controle de áreas centrais para dominar o campo.',
         'Concentre-se em regiões elevadas e cruzamentos estratégicos.',
-        JSON_ARRAY('https://cdn.example.com/images/area1.jpg', 'https://cdn.example.com/images/area2.jpg')
+        JSON_ARRAY('https://www.pm.ro.gov.br/wp-content/uploads/2023/02/WhatsApp-Image-2023-02-08-at-13.43.30-1-e1675869739444.jpeg')
     );
 
 INSERT INTO project_tb_members (project_tb_id, members_id) VALUES

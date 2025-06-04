@@ -24,12 +24,7 @@ public class ProjectEntity {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "project_members",
-            joinColumns = @JoinColumn(name = "project_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @ManyToMany
     private List<UserEntity> members;
 
     public ProjectEntity() {

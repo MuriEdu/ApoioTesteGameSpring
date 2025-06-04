@@ -8,16 +8,18 @@ import br.ufscar.dc.dsw.gametest.repositories.ProjectRepository;
 import br.ufscar.dc.dsw.gametest.repositories.SessionRepository;
 import br.ufscar.dc.dsw.gametest.repositories.StrategyRepository;
 import br.ufscar.dc.dsw.gametest.utils.MockedSessionDependencies;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class SessionsController {
@@ -75,6 +77,74 @@ public class SessionsController {
 
         sessionRepository.save(session);
         return "redirect:/sessions";
+    }
+
+
+
+    @GetMapping("/sessions/{id}/status")
+    public ResponseEntity<?> getSessionStatus(@PathVariable Long id) {
+        Optional<SessionsEntity> optSession = sessionRepository.findById(id);
+        if (optSession.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        SessionsEntity session = optSession.get();
+        SessionState status = session.getStatus();
+
+        long remainingSeconds = 0;
+
+        if (status == SessionState.IN_PROGRESS && session.getStarted_at() != null) {
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime startedAt = session.getStarted_at();
+            long elapsedSeconds = Duration.between(startedAt, now).getSeconds();
+            long totalSeconds = session.getTime_minutes() * 60;
+
+            remainingSeconds = totalSeconds - elapsedSeconds;
+            if (remainingSeconds < 0) remainingSeconds = 0;
+        }
+
+        return ResponseEntity.ok(Map.of(
+                "status", status.name(),
+                "remainingSeconds", remainingSeconds
+        ));
+    }
+
+    @PostMapping("/sessions/{id}/status")
+    public ResponseEntity<?> updateSessionStatus(@PathVariable Long id, @RequestBody Map<String, String> payload) {
+        Optional<SessionsEntity> optSession = sessionRepository.findById(id);
+        if (optSession.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        SessionsEntity session = optSession.get();
+
+        String newStatusStr = payload.get("status");
+        if (newStatusStr == null) {
+            return ResponseEntity.badRequest().body("Missing status");
+        }
+
+        SessionState newStatus;
+        try {
+            newStatus = SessionState.valueOf(newStatusStr);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid status value");
+        }
+
+        // Set started_at when going to IN_PROGRESS if not already set
+        if (newStatus == SessionState.IN_PROGRESS && session.getStarted_at() == null) {
+            session.setStarted_at(LocalDateTime.now());
+            session.setEnded_at(null);
+        }
+
+        // Set ended_at when session finishes
+        if (newStatus == SessionState.FINISHED && session.getEnded_at() == null) {
+            session.setEnded_at(LocalDateTime.now());
+        }
+
+        session.setStatus(newStatus);
+        sessionRepository.save(session);
+
+        return ResponseEntity.ok(Map.of("message", "Status updated"));
     }
 
 }
