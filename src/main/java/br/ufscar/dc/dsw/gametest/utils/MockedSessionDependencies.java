@@ -54,21 +54,21 @@ public class MockedSessionDependencies {
     public List<ProjectEntity> getRandomProject() {
         List<ProjectEntity> projects = Arrays.asList(
                 new ProjectEntity(
-                        1,
+                        1L,
                         "Projeto Alpha",
                         LocalDateTime.now(),
                         "Primeiro projeto de exemplo",
                         List.of() // assuming no members for simplicity
                 ),
                 new ProjectEntity(
-                        2,
+                        2L,
                         "Projeto Beta",
                         LocalDateTime.now(),
                         "Segundo projeto de exemplo",
                         List.of()
                 ),
                 new ProjectEntity(
-                        3,
+                        3L,
                         "Projeto Gama",
                         LocalDateTime.now(),
                         "Terceiro projeto de exemplo",
