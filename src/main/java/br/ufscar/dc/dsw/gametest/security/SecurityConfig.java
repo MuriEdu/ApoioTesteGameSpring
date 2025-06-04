@@ -25,6 +25,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Enable in production
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/users/**").hasRole("ADMIN")
                         .requestMatchers("/test/admin").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
