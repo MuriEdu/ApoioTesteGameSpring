@@ -1,6 +1,7 @@
 package br.ufscar.dc.dsw.gametest.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -8,20 +9,33 @@ import java.util.List;
 
 @Entity(name = "project_tb")
 public class ProjectEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
+
+    @NotBlank(message = "O nome do projeto é obrigatório.")
     @Column(nullable = false)
     private String name;
-    @Column
+
     private String description;
-    @Column
+
     @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdAt;
-    @ManyToMany
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "project_members",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     private List<UserEntity> members;
 
-    public ProjectEntity(int id, String name, LocalDateTime createdAt, String description, List<UserEntity> members) {
+    public ProjectEntity() {
+    }
+
+    public ProjectEntity(Long id, String name, LocalDateTime createdAt, String description, List<UserEntity> members) {
         this.id = id;
         this.name = name;
         this.createdAt = createdAt;
@@ -29,19 +43,13 @@ public class ProjectEntity {
         this.members = members;
     }
 
-    public ProjectEntity() {
+    // Getters e Setters
 
-    }
-
-    public List<UserEntity> getMembers() {
-        return members;
-    }
-
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -67,6 +75,10 @@ public class ProjectEntity {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<UserEntity> getMembers() {
+        return members;
     }
 
     public void setMembers(List<UserEntity> members) {
