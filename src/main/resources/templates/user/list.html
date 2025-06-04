@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Usuários</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body class="blue-grey lighten-5">
+
+<div th:replace="fragments/header :: mainHeader"></div>
+
+<div class="container" style="margin-top: 30px;">
+    <div class="row">
+        <div class="col s6 left-align">
+            <a th:href="@{/home}" class="btn grey darken-2">← Voltar para Home</a>
+        </div>
+        <div class="col s6 right-align">
+            <a th:href="@{/users/new}" class="btn green">Novo Usuário</a>
+        </div>
+    </div>
+
+    <h4 class="center-align">Lista de Usuários</h4>
+
+    <!-- ADMINISTRADORES -->
+    <h5 class="teal-text text-darken-2">Administradores</h5>
+    <table class="highlight responsive-table">
+        <thead>
+        <tr><th>Nome</th><th>Email</th><th>Ações</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${admins}">
+            <td th:text="${user.name}">Nome</td>
+            <td th:text="${user.email}">Email</td>
+            <td>
+                <a th:href="@{'/users/' + ${user.id} + '/edit'}" class="btn-small blue">
+                    <i class="material-icons">edit</i>
+                </a>
+                <form th:action="@{'/users/' + ${user.id} + '/delete'}" method="post" style="display:inline;">
+                    <button class="btn-small red" onclick="return confirm('Tem certeza que deseja deletar?')">
+                        <i class="material-icons">delete</i>
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- TESTADORES -->
+    <h5 class="teal-text text-darken-2" style="margin-top: 40px;">Testadores</h5>
+    <table class="highlight responsive-table">
+        <thead>
+        <tr><th>Nome</th><th>Email</th><th>Ações</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${testers}">
+            <td th:text="${user.name}">Nome</td>
+            <td th:text="${user.email}">Email</td>
+            <td>
+                <a th:href="@{'/users/' + ${user.id} + '/edit'}" class="btn-small blue">
+                    <i class="material-icons">edit</i>
+                </a>
+                <form th:action="@{'/users/' + ${user.id} + '/delete'}" method="post" style="display:inline;">
+                    <button class="btn-small red" onclick="return confirm('Tem certeza que deseja deletar?')">
+                        <i class="material-icons">delete</i>
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>

@@ -16,6 +16,10 @@ public class UserRepository {
         this.userDAO = userDAO;
     }
 
+    public Optional<UserEntity> findById(Long id){
+        return userDAO.findById(id);
+    }
+
     public Optional<UserEntity> findByEmail(String email) {
         return userDAO.findAll().stream()
                 .filter(user -> user.getEmail().equalsIgnoreCase(email))
