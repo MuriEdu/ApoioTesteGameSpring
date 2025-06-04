@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Estratégias de Teste</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+</head>
+<body class="blue-grey lighten-5">
+
+<!-- Header fixo -->
+<div th:replace="fragments/header :: mainHeader"></div>
+
+<div class="container" style="margin-top: 30px;">
+
+    <!-- Topo -->
+    <div class="row">
+        <div class="col s12 m6 left-align">
+            <a href="/home" class="btn grey darken-2">← Voltar para Home</a>
+        </div>
+        <div class="col s12 m6 right-align" th:if="${isAdmin}">
+            <a href="/strategies/new" class="btn green">Nova Estratégia</a>
+        </div>
+    </div>
+
+    <!-- Lista de Estratégias -->
+    <div class="row" th:each="strategy : ${strategies}">
+        <div class="col s12">
+            <div class="card z-depth-1 white">
+                <div class="card-content" style="padding: 20px 24px;">
+                    <div class="row">
+
+                        <!-- Texto -->
+                        <div class="col s12 m8">
+                            <span class="card-title teal-text text-darken-2" th:text="${strategy.name}">Título</span>
+                            <p th:text="${strategy.description}" style="margin-bottom: 10px;">Descrição</p>
+                            <p><strong>Dicas:</strong></p>
+                            <p th:text="${strategy.tips}">Dicas</p>
+                        </div>
+
+                        <!-- Imagem -->
+                        <div class="col s12 m4" th:if="${strategy.images != null and !strategy.images.empty}">
+                            <img th:src="${strategy.images[0]}" alt="Imagem da estratégia"
+                                 class="responsive-img z-depth-1" style="max-height: 200px;">
+                        </div>
+                    </div>
+
+                    <!-- Ações (admin) -->
+                    <div class="row" th:if="${isAdmin}">
+                        <div class="col s12 right-align">
+                            <a th:href="@{'/strategies/' + ${strategy.id} + '/edit'}" class="btn orange">Editar</a>
+                            <form th:action="@{'/strategies/' + ${strategy.id} + '/delete'}"
+                                  method="post" style="display: inline;"
+                                  onsubmit="return confirm('Tem certeza que deseja deletar esta estratégia?')">
+                                <button class="btn red" type="submit">Deletar</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nenhuma estratégia -->
+    <div class="card-panel yellow lighten-4 center-align" th:if="${strategies.empty}">
+        <span class="black-text">Nenhuma estratégia cadastrada.</span>
+    </div>
+
+</div>
+
+<!-- Materialize JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>
