@@ -1,11 +1,12 @@
 package br.ufscar.dc.dsw.gametest.repositories;
 
-import br.ufscar.dc.dsw.gametest.dao.IStrategyDAO;
-import br.ufscar.dc.dsw.gametest.entities.StrategyEntity;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.stereotype.Repository;
+
+import br.ufscar.dc.dsw.gametest.dao.IStrategyDAO;
+import br.ufscar.dc.dsw.gametest.entities.StrategyEntity;
 
 @Repository
 public class StrategyRepository {
@@ -37,4 +38,5 @@ public class StrategyRepository {
                 .filter(strategy -> strategy.getName() != null && strategy.getName().equalsIgnoreCase(name))
                 .toList();
     }
+    
 }

@@ -5,6 +5,7 @@
     <title th:text="${project.id != null ? 'Editar Projeto' : 'Novo Projeto'}">Projeto</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 <body class="blue-grey lighten-5">
 
@@ -33,12 +34,24 @@
         </div>
 
         <div class="input-field">
-            <select multiple th:field="*{members}" required>
-                <option th:each="user : ${allUsers}" th:value="${user.id}" th:text="${user.name}"
-                        th:selected="${project.members.contains(user)}"></option>
+            <select multiple th:field="*{members}">
+                <option th:each="user : ${allUsers}"
+                        th:value="${user.id}"
+                        th:text="${user.name}"
+                        th:selected="${project.members != null and project.members.contains(user)}">
+                </option>
             </select>
             <label>Membros</label>
             <span class="helper-text red-text" th:if="${#fields.hasErrors('members')}" th:errors="*{members}"></span>
+        </div>
+
+        <div class="input-field">
+            <select th:field="*{game}" required>
+                <option value="" disabled selected>Selecione o jogo</option>
+                <option th:each="game : ${allGames}" th:value="${game.id}" th:text="${game.name}" th:selected="${project.game != null and project.game.id == game.id}"></option>
+            </select>
+            <label>Jogo</label>
+            <span class="helper-text red-text" th:if="${#fields.hasErrors('game')}" th:errors="*{game}"></span>
         </div>
 
         <div class="center-align" style="margin-top: 20px;">
@@ -53,6 +66,17 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         M.FormSelect.init(document.querySelectorAll('select'));
+    });
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.select2').select2({
+            width: '100%',
+            placeholder: 'Selecione os membros',
+            allowClear: true
+        });
     });
 </script>
 </body>

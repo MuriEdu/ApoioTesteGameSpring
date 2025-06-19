@@ -1,11 +1,12 @@
 package br.ufscar.dc.dsw.gametest.repositories;
 
-import br.ufscar.dc.dsw.gametest.dao.IProjectDAO;
-import br.ufscar.dc.dsw.gametest.entities.ProjectEntity;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.stereotype.Repository;
+
+import br.ufscar.dc.dsw.gametest.dao.IProjectDAO;
+import br.ufscar.dc.dsw.gametest.entities.ProjectEntity;
 
 @Repository
 public class ProjectRepository {
