@@ -1,14 +1,15 @@
 package br.ufscar.dc.dsw.gametest.utils;
 
-import br.ufscar.dc.dsw.gametest.entities.ProjectEntity;
-import br.ufscar.dc.dsw.gametest.entities.StrategyEntity;
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
+
+import org.springframework.stereotype.Component;
+
+import br.ufscar.dc.dsw.gametest.entities.GameEntity;
+import br.ufscar.dc.dsw.gametest.entities.ProjectEntity;
+import br.ufscar.dc.dsw.gametest.entities.StrategyEntity;
 
 @Component
 public class MockedSessionDependencies {
@@ -51,28 +52,44 @@ public class MockedSessionDependencies {
         return strategies;
     }
 
-    public List<ProjectEntity> getRandomProject() {
+    public List<GameEntity> getRandomGames() {
+        return Arrays.asList(
+            new GameEntity(null, "Game Alpha", "Descrição do Game Alpha", "Empresa A", List.of()),
+            new GameEntity(null, "Game Beta", "Descrição do Game Beta", "Empresa B", List.of()),
+            new GameEntity(null, "Game Gama", "Descrição do Game Gama", "Empresa C", List.of())
+        );
+    }
+
+    // Recebe a lista de jogos já persistidos e associa corretamente aos projetos
+    public List<ProjectEntity> getRandomProject(List<GameEntity> savedGames) {
+        GameEntity game1 = savedGames.get(0);
+        GameEntity game2 = savedGames.get(1);
+        GameEntity game3 = savedGames.get(2);
+
         List<ProjectEntity> projects = Arrays.asList(
                 new ProjectEntity(
-                        1L,
+                        null,
                         "Projeto Alpha",
                         LocalDateTime.now(),
                         "Primeiro projeto de exemplo",
-                        List.of() // assuming no members for simplicity
+                        List.of(),
+                        game1
                 ),
                 new ProjectEntity(
-                        2L,
+                        null,
                         "Projeto Beta",
                         LocalDateTime.now(),
                         "Segundo projeto de exemplo",
-                        List.of()
+                        List.of(),
+                        game2
                 ),
                 new ProjectEntity(
-                        3L,
+                        null,
                         "Projeto Gama",
                         LocalDateTime.now(),
                         "Terceiro projeto de exemplo",
-                        List.of()
+                        List.of(),
+                        game3
                 )
         );
 

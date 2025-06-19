@@ -40,6 +40,10 @@
                     <span class="card-title teal-text text-darken-3" th:text="${project.name}">Nome do Projeto</span>
                     <p th:text="${project.description}">Descrição</p>
                     <p><strong>Criado em:</strong> <span th:text="${#temporals.format(project.createdAt, 'dd/MM/yyyy HH:mm')}"></span></p>
+                    <p>
+                        <strong>Jogo:</strong>
+                        <span th:text="${project.game != null ? project.game.name : 'Nenhum'}">Nome do Jogo</span>
+                    </p>
                     <div>
                         <strong>Membros:</strong>
                         <ul>

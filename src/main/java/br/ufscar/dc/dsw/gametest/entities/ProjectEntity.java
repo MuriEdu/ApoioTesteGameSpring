@@ -1,11 +1,19 @@
 package br.ufscar.dc.dsw.gametest.entities;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.LocalDateTime;
 import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity(name = "project_tb")
 public class ProjectEntity {
@@ -31,12 +39,18 @@ public class ProjectEntity {
         //this.members = new ArrayList<>();
     }
 
-    public ProjectEntity(Long id, String name, LocalDateTime createdAt, String description, List<UserEntity> members) {
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "game_id", nullable = false)
+    private GameEntity game;
+
+
+    public ProjectEntity(Long id, String name, LocalDateTime createdAt, String description, List<UserEntity> members, GameEntity game) {
         this.id = id;
         this.name = name;
         this.createdAt = createdAt;
         this.description = description;
         this.members = members;
+        this.game = game;
     }
 
     // Getters e Setters
@@ -79,5 +93,13 @@ public class ProjectEntity {
 
     public void setMembers(List<UserEntity> members) {
         this.members = members;
+    }
+
+    public GameEntity getGame() {
+        return game;
+    }
+
+    public void setGame(GameEntity game) {
+        this.game = game;
     }
 }

@@ -1,18 +1,22 @@
 package br.ufscar.dc.dsw.gametest.controllers;
 
-import br.ufscar.dc.dsw.gametest.entities.ProjectEntity;
-import br.ufscar.dc.dsw.gametest.entities.UserEntity;
-import br.ufscar.dc.dsw.gametest.enums.Roles;
-import br.ufscar.dc.dsw.gametest.repositories.ProjectRepository;
-import br.ufscar.dc.dsw.gametest.repositories.UserRepository;
-import jakarta.validation.Valid;
+import java.util.List;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
+import br.ufscar.dc.dsw.gametest.entities.ProjectEntity;
+import br.ufscar.dc.dsw.gametest.repositories.GameRepository;
+import br.ufscar.dc.dsw.gametest.repositories.ProjectRepository;
+import br.ufscar.dc.dsw.gametest.repositories.UserRepository;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/projects")
@@ -20,10 +24,12 @@ public class ProjectController {
 
     private final ProjectRepository projectRepo;
     private final UserRepository userRepo;
+    private final GameRepository gameRepository;
 
-    public ProjectController(ProjectRepository projectRepo, UserRepository userRepo) {
+    public ProjectController(ProjectRepository projectRepo, UserRepository userRepo, GameRepository gameRepository) {
         this.projectRepo = projectRepo;
         this.userRepo = userRepo;
+        this.gameRepository = gameRepository;
     }
 
     @GetMapping
@@ -41,7 +47,6 @@ public class ProjectController {
             var user = userRepo.findByEmail(userEmail).orElse(null);
             projects = (user != null) ? projectRepo.findByMemberId(user.getId()) : List.of();
         }
-
         model.addAttribute("projects", projects);
         return "project/list";
     }
@@ -50,6 +55,7 @@ public class ProjectController {
     public String newProject(Model model) {
         model.addAttribute("project", new ProjectEntity());
         model.addAttribute("allUsers", userRepo.findAll());
+        model.addAttribute("allGames", gameRepository.findAll());
         return "project/form";
     }
 
@@ -59,6 +65,7 @@ public class ProjectController {
                 .orElseThrow(() -> new IllegalArgumentException("ID inválido: " + id));
         model.addAttribute("project", project);
         model.addAttribute("allUsers", userRepo.findAll());
+        model.addAttribute("allGames", gameRepository.findAll());
         return "project/form";
     }
 
