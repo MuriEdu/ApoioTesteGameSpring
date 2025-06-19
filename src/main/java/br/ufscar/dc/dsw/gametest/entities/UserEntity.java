@@ -27,7 +27,7 @@ public class UserEntity {
     private String email;
 
 
-    @Size(min = 6, message = "A senha deve ter pelo menos 6 caracteres.")
+    //@Size(min = 6, message = "A senha deve ter pelo menos 6 caracteres.")
     @Column(nullable = false)
     private String password;
 
