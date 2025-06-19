@@ -28,6 +28,7 @@ public class ProjectEntity {
     private List<UserEntity> members;
 
     public ProjectEntity() {
+        //this.members = new ArrayList<>();
     }
 
     public ProjectEntity(Long id, String name, LocalDateTime createdAt, String description, List<UserEntity> members) {

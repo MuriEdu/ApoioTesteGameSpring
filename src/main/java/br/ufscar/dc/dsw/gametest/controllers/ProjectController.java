@@ -36,7 +36,7 @@ public class ProjectController {
     @GetMapping("/new")
     public String newProject(Model model) {
         model.addAttribute("project", new ProjectEntity());
-        model.addAttribute("members", userRepo.findAll());
+        model.addAttribute("allUsers", userRepo.findAll());
         return "project/form";
     }
 
@@ -45,14 +45,14 @@ public class ProjectController {
         ProjectEntity project = projectRepo.findById((long) id)
                 .orElseThrow(() -> new IllegalArgumentException("ID inválido: " + id));
         model.addAttribute("project", project);
-        model.addAttribute("members", userRepo.findAll());
+        model.addAttribute("allUsers", userRepo.findAll());
         return "project/form";
     }
 
     @PostMapping("/save")
     public String saveProject(@ModelAttribute("project") @Valid ProjectEntity project, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("members", userRepo.findAll());
+            model.addAttribute("allUsers", userRepo.findAll());
             return "project/form";
         }
 
