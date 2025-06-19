@@ -27,8 +27,21 @@ public class ProjectController {
     }
 
     @GetMapping
-    public String list(Model model) {
-        List<ProjectEntity> projects = projectRepo.findAll();
+    public String list(Model model, Authentication authentication) {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+
+        List<ProjectEntity> projects;
+
+        if (isAdmin) {
+            projects = projectRepo.findAll();
+        } else {
+            // Tester só vê projetos dos quais faz parte
+            var userEmail = authentication.getName(); // o e-mail é o username
+            var user = userRepo.findByEmail(userEmail).orElse(null);
+            projects = (user != null) ? projectRepo.findByMemberId(user.getId()) : List.of();
+        }
+
         model.addAttribute("projects", projects);
         return "project/list";
     }
@@ -36,7 +49,7 @@ public class ProjectController {
     @GetMapping("/new")
     public String newProject(Model model) {
         model.addAttribute("project", new ProjectEntity());
-        model.addAttribute("members", userRepo.findAll());
+        model.addAttribute("allUsers", userRepo.findAll());
         return "project/form";
     }
 
@@ -45,14 +58,14 @@ public class ProjectController {
         ProjectEntity project = projectRepo.findById((long) id)
                 .orElseThrow(() -> new IllegalArgumentException("ID inválido: " + id));
         model.addAttribute("project", project);
-        model.addAttribute("members", userRepo.findAll());
+        model.addAttribute("allUsers", userRepo.findAll());
         return "project/form";
     }
 
     @PostMapping("/save")
     public String saveProject(@ModelAttribute("project") @Valid ProjectEntity project, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("members", userRepo.findAll());
+            model.addAttribute("allUsers", userRepo.findAll());
             return "project/form";
         }
 

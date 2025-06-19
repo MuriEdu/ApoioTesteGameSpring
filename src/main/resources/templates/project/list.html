@@ -33,12 +33,12 @@
         </div>
     </div>
 
-    <div class="row" th:each="project : ${projects}">
-        <div class="col s12 m6">
+    <div class="row" th:if="${not #lists.isEmpty(projects)}" style="display: flex; flex-direction: column; align-items: center;">
+        <div th:each="project : ${projects}" style="width: 60%; margin-bottom: 20px;">
             <div class="card white z-depth-2">
                 <div class="card-content">
                     <span class="card-title teal-text text-darken-3" th:text="${project.name}">Nome do Projeto</span>
-                    <p th:text="${project.description}">Descrição do projeto</p>
+                    <p th:text="${project.description}">Descrição</p>
                     <p><strong>Criado em:</strong> <span th:text="${#temporals.format(project.createdAt, 'dd/MM/yyyy HH:mm')}"></span></p>
                     <div>
                         <strong>Membros:</strong>
