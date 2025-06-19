@@ -59,17 +59,34 @@ public class UserController {
             result.rejectValue("email", "error.user", "Este e-mail já está em uso.");
         }
 
+        boolean isNewUser = user.getId() == 0;
+        String rawPassword = user.getPassword();
+
+        // Validação para novo usuário
+        if (isNewUser) {
+            if (rawPassword == null || rawPassword.length() < 6) {
+                result.rejectValue("password", "error.user", "A senha deve ter pelo menos 6 caracteres.");
+            }
+        }
+
+        // Validação para edição
+        else {
+            if (rawPassword != null && !rawPassword.isBlank() && rawPassword.length() < 6) {
+                result.rejectValue("password", "error.user", "A nova senha deve ter pelo menos 6 caracteres.");
+            }
+        }
+
         if (result.hasErrors()) {
             model.addAttribute("roles", Roles.values());
             return "user/form";
         }
 
-        // Lógica de senha
-        if (user.getId() != 0 && user.getId() != 0 && (user.getPassword() == null || user.getPassword().isBlank())) {
-            String currentPassword = userRepo.findById(user.getId()).map(UserEntity::getPassword).orElse(null);
-            user.setPassword(currentPassword);
+        if (isNewUser || (rawPassword != null && !rawPassword.isBlank())) {
+            user.setPassword(passwordEncoder.encode(rawPassword));
         } else {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            // Mantém a senha anterior caso esteja em branco
+            var existingUser = userRepo.findById(user.getId()).orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+            user.setPassword(existingUser.getPassword());
         }
 
         userRepo.save(user);
