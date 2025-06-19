@@ -27,8 +27,21 @@ public class ProjectController {
     }
 
     @GetMapping
-    public String list(Model model) {
-        List<ProjectEntity> projects = projectRepo.findAll();
+    public String list(Model model, Authentication authentication) {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+
+        List<ProjectEntity> projects;
+
+        if (isAdmin) {
+            projects = projectRepo.findAll();
+        } else {
+            // Tester só vê projetos dos quais faz parte
+            var userEmail = authentication.getName(); // o e-mail é o username
+            var user = userRepo.findByEmail(userEmail).orElse(null);
+            projects = (user != null) ? projectRepo.findByMemberId(user.getId()) : List.of();
+        }
+
         model.addAttribute("projects", projects);
         return "project/list";
     }
