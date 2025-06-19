@@ -16,7 +16,7 @@
 
     <div class="card-panel white z-depth-2">
         <div class="row center-align">
-            <div th:if="${isAuthenticated}" class="col s12" style="margin-bottom: 15px;">
+            <div th:if="${isAdmin}" class="col s12" style="margin-bottom: 15px;">
                 <a href="/users" class="btn-large blue waves-effect manage-btn" style="width: 350px;">Gerenciar Usuários</a>
             </div>
             <div th:if="${isAuthenticated}" class="col s12" style="margin-bottom: 15px;">
