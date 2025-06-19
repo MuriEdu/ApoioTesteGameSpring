@@ -41,7 +41,6 @@
                         th:selected="${project.members != null and project.members.contains(user)}">
                 </option>
             </select>
-            <label>Membros</label>
             <span class="helper-text red-text" th:if="${#fields.hasErrors('members')}" th:errors="*{members}"></span>
         </div>
 

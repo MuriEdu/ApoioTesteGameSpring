@@ -36,6 +36,7 @@ public class ProjectEntity {
     private List<UserEntity> members;
 
     public ProjectEntity() {
+        //this.members = new ArrayList<>();
     }
 
     @ManyToOne(optional = false)

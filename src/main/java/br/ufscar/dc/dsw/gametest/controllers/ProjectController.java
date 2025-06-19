@@ -72,7 +72,7 @@ public class ProjectController {
     @PostMapping("/save")
     public String saveProject(@ModelAttribute("project") @Valid ProjectEntity project, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("members", userRepo.findAll());
+            model.addAttribute("allUsers", userRepo.findAll());
             return "project/form";
         }
 
