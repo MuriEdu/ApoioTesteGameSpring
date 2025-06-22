@@ -8,24 +8,24 @@
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body>
-<div th:replace="fragments/header :: mainHeader"></div>
+<body class="blue-grey lighten-5">
 
-<!-- Create Session Button -->
+<div th:replace="fragments/header :: mainHeader"></div>
 <div class="container" style="margin-top: 30px;">
+    <!-- Create Session Button -->
     <div class="row">
         <div class="col s6 left-align">
             <a href="/home" class="btn grey darken-2">
                 <i class="material-icons left">arrow_back</i>Home
             </a>
         </div>
-
         <div class="col s6 right-align" th:if="${#authorization.expression('isAuthenticated()')}">
             <a href="/sessions/new" class="btn green">
                 <i class="material-icons left">add</i>Nova Sessão
             </a>
         </div>
     </div>
+
     <h4 class="center-align">Sessões</h4>
 
     <!-- Empty message -->
@@ -47,7 +47,7 @@
         </thead>
         <tbody>
         <tr th:each="testSession : ${testSessions}" th:attr="data-session-id=${testSession.id}">
-        <td th:text="${testSession.project.name}">Nome do Projeto</td>
+            <td th:text="${testSession.project.name}">Nome do Projeto</td>
             <td th:text="${testSession.strategy.name}">Nome da Estratégia</td>
             <td>
                 <ul>
