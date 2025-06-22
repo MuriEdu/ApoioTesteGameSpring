@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Estratégias de Teste</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body class="blue-grey lighten-5">
 
@@ -14,13 +15,20 @@
 
     <!-- Topo -->
     <div class="row">
-        <div class="col s12 m6 left-align">
-            <a href="/home" class="btn grey darken-2">← Voltar para Home</a>
+        <div class="col s6 left-align">
+            <a href="/home" class="btn grey darken-2">
+                <i class="material-icons left">arrow_back</i>Home
+            </a>
         </div>
-        <div class="col s12 m6 right-align" th:if="${isAdmin}">
-            <a href="/strategies/new" class="btn green">Nova Estratégia</a>
+
+        <div class="col s6 right-align" th:if="${isAdmin}">
+            <a href="/strategies/new" class="btn green">
+                <i class="material-icons left">add</i>Nova Estratégia
+            </a>
         </div>
     </div>
+
+    <h4 class="center-align">Estratégias</h4>
 
     <!-- Lista de Estratégias -->
     <div class="row" th:each="strategy : ${strategies}">
