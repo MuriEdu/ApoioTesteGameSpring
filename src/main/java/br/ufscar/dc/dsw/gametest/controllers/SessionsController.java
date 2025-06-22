@@ -35,6 +35,43 @@ public class SessionsController {
         this.strategyRepository = strategyRepository;
     }
 
+
+    // Exibe o formulário de edição
+    @GetMapping("/sessions/{id}/edit")
+    public String editSession(@PathVariable Long id, Model model) {
+        SessionsEntity session = sessionRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Sessão não encontrada: " + id));
+
+        model.addAttribute("sessionForm", session);          // reutiliza o mesmo *command object*
+        model.addAttribute("strategies", strategyRepository.findAll());
+        model.addAttribute("projects",   projectRepository.findAll());
+        return "protected/session-form";                     // template único p/ create + edit
+    }
+
+    // Salva as alterações
+    @PostMapping("/sessions/{id}/save")
+    public String updateSession(@PathVariable Long id,
+                                @RequestParam("project_id")  Long projectId,
+                                @RequestParam("strategy_id") Long strategyId,
+                                @RequestParam("duration")    int  duration) {
+
+        SessionsEntity session = sessionRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Sessão não encontrada: " + id));
+
+        session.setProject  (projectRepository .findById(projectId) .orElseThrow());
+        session.setStrategy (strategyRepository.findById(strategyId).orElseThrow());
+        session.setTime_minutes(duration);
+
+        // Se a sessão ainda não foi finalizada, volta ao estado “CREATED” 
+        if (session.getStatus() != SessionState.FINISHED) {
+            session.setStatus   (SessionState.CREATED);
+            session.setStarted_at(null);
+            session.setEnded_at  (null);
+        }
+        sessionRepository.save(session);
+        return "redirect:/sessions";
+    }
+
     @GetMapping("/sessions")
     public String listSessions(Model model, Authentication authentication) {
 
