@@ -13,10 +13,10 @@ public class SessionsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_tb_id")
     private ProjectEntity project;
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "strategy_tb_id")
     private StrategyEntity strategy;
     @Column(nullable = false)
