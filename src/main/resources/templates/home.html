@@ -1,50 +1,50 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
+    <title th:text="#{page.home.title}">Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Materialize CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
 </head>
 <body class="blue-grey lighten-5">
 <div th:replace="fragments/header :: mainHeader"></div>
 
 <div class="container" style="margin-top: 5%;">
-    <h4 class="center-align">Dashboard</h4>
+    <h4 class="center-align" th:text="#{page.home.header}">Dashboard</h4>
 
     <div class="card-panel white z-depth-2">
         <div class="row center-align">
             <div th:if="${isAdmin}" class="col s12" style="margin-bottom: 15px;">
-            <a href="/users" class="btn-large blue waves-effect manage-btn" style="width: 350px;">Gerenciar Usuários</a>
+                <a href="/users" class="btn-large blue waves-effect manage-btn" style="width: 350px;" th:text="#{button.manage.users}">Gerenciar Usuários</a>
             </div>
             <div th:if="${isAuthenticated}" class="col s12" style="margin-bottom: 15px;">
-            <a href="/projects" class="btn-large amber darken-2 waves-effect" style="width: 350px;">Explorar Projetos</a>
+                <a href="/projects" class="btn-large amber darken-2 waves-effect" style="width: 350px;" th:text="#{button.explore.projects}">Explorar Projetos</a>
             </div>
             <div class="col s12" style="margin-bottom: 15px;">
-            <a href="/strategies" class="btn-large green waves-effect" style="width: 350px;">Explorar Estratégias</a>
+                <a href="/strategies" class="btn-large green waves-effect" style="width: 350px;" th:text="#{button.explore.strategies}">Explorar Estratégias</a>
             </div>
             <div class="col s12" style="margin-bottom: 15px;">
-            <a href="/sessions" class="btn-large red waves-effect" style="width: 350px;">Explorar Sessões de Teste</a>
+                <a href="/sessions" class="btn-large red waves-effect" style="width: 350px;" th:text="#{button.explore.sessions}">Explorar Sessões de Teste</a>
             </div>
             <div class="col s12" style="margin-bottom: 15px;">
-            <a href="/games" class="btn-large deep-orange waves-effect" style="width: 350px;">Explorar Jogos</a>
+                <a href="/games" class="btn-large deep-orange waves-effect" style="width: 350px;" th:text="#{button.explore.games}">Explorar Jogos</a>
             </div>
             <div class="col s12">
-            <a href="/genres" class="btn-large indigo waves-effect" style="width: 350px;">Explorar Gêneros</a>
+                <a href="/genres" class="btn-large indigo waves-effect" style="width: 350px;" th:text="#{button.explore.genres}">Explorar Gêneros</a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Materialize JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-<!-- Inject Spring Security values -->
 <script th:inline="javascript">
-    const isAuthenticated = [[${isAuthenticated}]];
-    const isAdmin = [[${isAdmin}]];
+    /*<![CDATA[*/
+    const isAuthenticated = /*[[${isAuthenticated}]]*/ false;
+    const isAdmin = /*[[${isAdmin}]]*/ false;
+    const adminRequiredMessage = /*[[#{error.admin.required}]]*/ 'You must be an admin to access';
+    /*]]>*/
 </script>
 
 
@@ -60,13 +60,13 @@
                 button.classList.add('grey');
                 button.addEventListener('click', (e) => {
                     e.preventDefault();
-                    M.toast({html: 'You should be an admin', classes: 'red'});
+                    // Usa a variável com a mensagem traduzida
+                    M.toast({html: adminRequiredMessage, classes: 'red'});
                 });
             }
         });
     });
 </script>
-
 
 </body>
 </html>
