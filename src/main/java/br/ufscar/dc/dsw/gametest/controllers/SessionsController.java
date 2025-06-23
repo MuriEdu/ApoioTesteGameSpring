@@ -4,7 +4,7 @@ import br.ufscar.dc.dsw.gametest.entities.ProjectEntity;
 import br.ufscar.dc.dsw.gametest.entities.SessionsEntity;
 import br.ufscar.dc.dsw.gametest.entities.StrategyEntity;
 import br.ufscar.dc.dsw.gametest.entities.BugEntity;
-import br.ufscar.dc.dsw.gametest.repositories.SessionBugRepository;
+import br.ufscar.dc.dsw.gametest.repositories.BugRepository;
 import br.ufscar.dc.dsw.gametest.enums.SessionState;
 import br.ufscar.dc.dsw.gametest.repositories.ProjectRepository;
 import br.ufscar.dc.dsw.gametest.repositories.SessionRepository;
@@ -12,7 +12,6 @@ import br.ufscar.dc.dsw.gametest.repositories.StrategyRepository;
 import br.ufscar.dc.dsw.gametest.utils.MockedSessionDependencies;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,19 +28,19 @@ public class SessionsController {
     private final SessionRepository sessionRepository;
     private final ProjectRepository projectRepository;
     private final StrategyRepository strategyRepository;
-    private final SessionBugRepository sessionBugRepository;
+    private final BugRepository bugRepository;
 
     public SessionsController(
             SessionRepository sessionRepository,
             MockedSessionDependencies mockedSessionDependencies,
             ProjectRepository projectRepository,
             StrategyRepository strategyRepository,
-            SessionBugRepository sessionBugRepository
+            BugRepository bugRepository
     ) {
         this.sessionRepository = sessionRepository;
         this.projectRepository = projectRepository;
         this.strategyRepository = strategyRepository;
-        this.sessionBugRepository = sessionBugRepository;
+        this.bugRepository = bugRepository;
     }
 
 
@@ -193,76 +192,8 @@ public class SessionsController {
         return ResponseEntity.ok(Map.of("message", "Status updated"));
     }
 
-    @GetMapping("/sessions/{id}/bugs")
-    public String listSessionBugs(@PathVariable Long id, Model model) {
-        SessionsEntity session = sessionRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Sessão não encontrada: " + id));
 
-        List<BugEntity> bugs = sessionBugRepository.findBySession(session);
 
-        model.addAttribute("session", session);
-        model.addAttribute("bugs", bugs);
-        return "bugs/list";
-    }
 
-    @GetMapping("/sessions/{id}/bugs/register")
-    public String showBugRegistrationForm(@PathVariable Long id, Model model) {
-        SessionsEntity session = sessionRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Sessão não encontrada: " + id));
 
-        model.addAttribute("session", session);
-        model.addAttribute("bugForm", new BugEntity());
-        return "bugs/form";
-    }
-
-    @PostMapping("/sessions/{id}/bugs")
-    public String registerBugForSession(
-            @PathVariable Long id,
-            @ModelAttribute("bugForm") BugEntity bugForm) {
-
-        SessionsEntity session = sessionRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Sessão não encontrada: " + id));
-
-        bugForm.setSession(session);
-        sessionBugRepository.save(bugForm);
-
-        return "redirect:/sessions/" + id + "/bugs";
-    }
-
-    @GetMapping("/sessions/{sessionId}/bugs/{bugId}/edit")
-    public String editBug(@PathVariable Long sessionId,
-                          @PathVariable Long bugId,
-                          Model model) {
-        SessionsEntity session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new IllegalArgumentException("Sessão não encontrada: " + sessionId));
-
-        BugEntity bug = sessionBugRepository.findById(bugId)
-                .orElseThrow(() -> new IllegalArgumentException("Bug não encontrado: " + bugId));
-
-        model.addAttribute("session", session);
-        model.addAttribute("bugForm", bug);
-        return "bugs/form";
-    }
-
-    @PostMapping("/sessions/{sessionId}/bugs/{bugId}/edit")
-    public String updateBug(@PathVariable Long sessionId,
-                            @PathVariable Long bugId,
-                            @ModelAttribute("bugForm") BugEntity bugForm) {
-
-        BugEntity bug = sessionBugRepository.findById(bugId)
-                .orElseThrow(() -> new IllegalArgumentException("Bug não encontrado: " + bugId));
-
-        bug.setDescription(bugForm.getDescription());
-        sessionBugRepository.save(bug);
-
-        return "redirect:/sessions/" + sessionId + "/bugs";
-    }
-
-    @PostMapping("/sessions/{sessionId}/bugs/{bugId}/delete")
-    public String deleteBug(@PathVariable Long sessionId,
-                            @PathVariable Long bugId) {
-
-        sessionBugRepository.deleteById(bugId);
-        return "redirect:/sessions/" + sessionId + "/bugs";
-    }
 }
