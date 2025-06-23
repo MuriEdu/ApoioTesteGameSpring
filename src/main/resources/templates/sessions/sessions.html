@@ -3,15 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Sessions List</title>
-    <!-- Materialize CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
-    <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
 <div th:replace="fragments/header :: mainHeader"></div>
 
-<!-- Create Session Button -->
 <div class="container" style="margin-top: 30px;">
     <div class="row">
         <div class="col s6 left-align">
@@ -19,7 +16,6 @@
                 <i class="material-icons left">arrow_back</i>Home
             </a>
         </div>
-
         <div class="col s6 right-align" th:if="${#authorization.expression('isAuthenticated()')}">
             <a href="/sessions/new" class="btn green">
                 <i class="material-icons left">add</i>Nova Sessão
@@ -28,11 +24,9 @@
     </div>
     <h4 class="center-align">Sessões</h4>
 
-    <!-- Empty message -->
     <div class="card-panel yellow lighten-4 center-align" th:if="${testSessions.empty}">
         <span class="black-text">Não há sessões cadastradas.</span>
     </div>
-    <!-- Sessions table -->
     <table class="highlight responsive-table" th:if="${not testSessions.empty}">
         <thead>
         <tr>
@@ -47,7 +41,7 @@
         </thead>
         <tbody>
         <tr th:each="testSession : ${testSessions}" th:attr="data-session-id=${testSession.id}">
-        <td th:text="${testSession.project.name}">Nome do Projeto</td>
+            <td th:text="${testSession.project.name}">Nome do Projeto</td>
             <td th:text="${testSession.strategy.name}">Nome da Estratégia</td>
             <td>
                 <ul>
@@ -56,8 +50,6 @@
             </td>
             <td th:text="${testSession.time_minutes}">Tempo</td>
             <td th:text="${#temporals.format(testSession.created_at, 'dd/MM/yyyy HH:mm')}">Data</td>
-
-            <!-- Status -->
             <td>
                 <span th:switch="${testSession.status.name()}">
                     <span th:case="'CREATED'" class="new badge blue" data-badge-caption="Criada"></span>
@@ -66,36 +58,34 @@
                     <span th:case="*">Desconhecido</span>
                 </span>
             </td>
-
-
-            <!-- Ações -->
             <td>
                 <a class="btn red lighten-1 tooltipped" data-tooltip="Reportar Bug"
+                   th:if="${#authorization.expression('isAuthenticated()') and testSession.project.members.![email].contains(#authentication.principal.username) and testSession.status.name() != 'CREATED'}"
                    th:href="@{/sessions/{id}/bugs(id=${testSession.id})}">
                     <i class="material-icons">bug_report</i>
                 </a>
+
                 <a class="btn blue lighten-1 tooltipped" data-tooltip="Editar Sessão"
+                   th:if="${#authorization.expression('isAuthenticated()') and (testSession.project.members.![email].contains(#authentication.principal.username) or #authorization.expression('hasRole(''ADMIN'')') ) and testSession.status.name() != 'FINISHED'}"
                    th:href="@{/sessions/{id}/edit(id=${testSession.id})}">
                     <i class="material-icons">edit</i>
                 </a>
                 <a class="btn green lighten-1 tooltipped"
                    data-tooltip="Iniciar Sessão"
                    href="#!"
+                   th:if="${#authorization.expression('isAuthenticated()') and (testSession.project.members.![email].contains(#authentication.principal.username) or #authorization.expression('hasRole(''ADMIN'')') ) and testSession.status.name() == 'CREATED'}"
                    th:onclick="'startTimer(' + ${testSession.id} + ', ' + (${testSession.time_minutes} * 60) + ')'">
                     <i class="material-icons">play_arrow</i>
                 </a>
-
-
             </td>
         </tr>
         </tbody>
     </table>
-
 </div>
 
-<!-- Materialize JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script>
+    // YOUR EXISTING JAVASCRIPT REMAINS HERE...
     document.addEventListener('DOMContentLoaded', function () {
         const elems = document.querySelectorAll('.tooltipped');
         M.Tooltip.init(elems);

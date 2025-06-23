@@ -18,6 +18,10 @@
     <h4 class="center-align" th:text="${bug.id != 0 ? 'Editar Bug' : 'Registrar Bug'}"></h4>
     <h6 class="center-align" th:text="'Sessão: ' + ${sessionId}"></h6>
 
+    <div th:if="${sessionStatus.name() != 'IN_PROGRESS'}" class="card-panel orange lighten-2 white-text center-align" style="margin-top: 20px; padding: 10px;">
+        <p style="margin: 0;">Esta sessão não está em andamento. Não é possível salvar alterações.</p>
+    </div>
+
     <form method="post" class="col s12"
           th:object="${bug}"
           th:action="@{/sessions/{sessionId}/bugs/save(sessionId=${sessionId})}">
@@ -30,7 +34,7 @@
         </div>
 
         <div class="center-align" style="margin-top: 20px;">
-            <button type="submit" class="btn blue waves-effect">
+            <button type="submit" class="btn blue waves-effect" th:disabled="${sessionStatus.name() != 'IN_PROGRESS'}">
                 <i class="material-icons left">save</i>Salvar
             </button>
         </div>
