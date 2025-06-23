@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
-    <!-- Materialize CSS -->
+    <title th:text="#{page.login.title}">Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"/>
 </head>
 <body class="blue-grey lighten-5">
@@ -12,18 +11,18 @@
         <div class="col s12 m6 offset-m3">
             <div class="card">
                 <div class="card-content">
-                    <span class="card-title center-align">Login</span>
+                    <span class="card-title center-align" th:text="#{page.login.title}">Login</span>
                     <form method="post" th:action="@{/login}" onsubmit="return validateEmail()">
                         <div class="input-field">
                             <input id="username" name="username" type="email" class="validate" required>
-                            <label for="username">Email</label>
+                            <label for="username" th:text="#{label.email}">Email</label>
                         </div>
                         <div class="input-field">
                             <input id="password" name="password" type="password" class="validate" required>
-                            <label for="password">Password</label>
+                            <label for="password" th:text="#{label.password}">Password</label>
                         </div>
                         <div class="center-align">
-                            <button type="submit" class="btn waves-effect waves-light blue">Login</button>
+                            <button type="submit" class="btn waves-effect waves-light blue" th:text="#{button.login}">Login</button>
                         </div>
                     </form>
                 </div>
@@ -32,15 +31,19 @@
     </div>
 </div>
 
-<!-- Snackbar container -->
-<div id="snackbar" class="card-panel red lighten-1 white-text center-align" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000;">
+<div id="snackbar" class="card-panel red lighten-1 white-text center-align" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000;"
+     th:text="#{error.invalid.credentials}">
     Credenciais inválidas
 </div>
 
-<!-- Materialize JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-<script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // Passa as mensagens traduzidas do Thymeleaf para variáveis JavaScript
+    const invalidEmailMessage = /*[[#{error.invalid.email}]]*/ 'Email inválido';
+    /*]]>*/
+
     // Exibe snackbar se houver erro
     document.addEventListener('DOMContentLoaded', function () {
         const urlParams = new URLSearchParams(window.location.search);
@@ -53,14 +56,15 @@
         }
     });
 
-    // Validação de e-mail
+    // Validação de e-mail usando a mensagem traduzida
     function validateEmail() {
         const emailInput = document.getElementById('username');
         const email = emailInput.value.trim();
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (!emailRegex.test(email)) {
-            M.toast({html: 'Email inválido', classes: 'red'});
+            // Usa a variável com a mensagem traduzida
+            M.toast({html: invalidEmailMessage, classes: 'red'});
             emailInput.focus();
             return false;
         }
