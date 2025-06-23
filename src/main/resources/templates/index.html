@@ -1,29 +1,27 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8">
-    <title>Welcome</title>
+    <title th:text="#{page.index.title}">Welcome</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Materialize CSS CDN -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
 </head>
 <body class="blue-grey lighten-5">
 
 <div class="container center-align" style="margin-top: 20vh;">
-    <h4>Welcome</h4>
+    <h4 th:text="#{page.index.welcome}">Welcome</h4>
 
     <div class="row" style="margin-top: 40px;">
         <div class="col s12">
-            <a th:href="@{/login}" class="btn-large blue waves-effect waves-light" style="width: 300px;">Login</a>
+            <a th:href="@{/login}" class="btn-large blue waves-effect waves-light" style="width: 300px;" th:text="#{button.login}">Login</a>
         </div>
         <div class="col s12" style="margin-top: 20px;">
-            <a th:href="@{/home}" class="btn-large grey lighten-1 black-text waves-effect" style="width: 300px;">Continue as Visitor</a>
+            <a th:href="@{/home}" class="btn-large grey lighten-1 black-text waves-effect" style="width: 300px;" th:text="#{button.continue.visitor}">Continue as Visitor</a>
         </div>
     </div>
 </div>
 
-<!-- Materialize JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </body>
 </html>
