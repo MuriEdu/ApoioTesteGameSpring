@@ -71,7 +71,7 @@
             <!-- Ações -->
             <td>
                 <a class="btn red lighten-1 tooltipped" data-tooltip="Reportar Bug"
-                   th:href="@{/sessions/{id}/bug(id=${testSession})}">
+                   th:href="@{/sessions/{id}/bugs(id=${testSession.id})}">
                     <i class="material-icons">bug_report</i>
                 </a>
                 <a class="btn blue lighten-1 tooltipped" data-tooltip="Editar Sessão"
