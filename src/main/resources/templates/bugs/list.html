@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Bugs da Sessão</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body class="blue-grey lighten-5">
+
+<div th:replace="~{fragments/header :: mainHeader}"></div>
+
+<div class="container" style="margin-top: 30px;">
+    <div class="row">
+        <div class="col s6 left-align">
+            <a th:href="@{/sessions}" class="btn grey darken-2">
+                <i class="material-icons left">arrow_back</i>Sessões
+            </a>
+        </div>
+        <div class="col s6 right-align" th:if="${sessionStatus.name() == 'IN_PROGRESS'}">
+            <a th:href="@{/sessions/{sessionId}/bugs/new(sessionId=${sessionId})}" class="btn green">
+                <i class="material-icons left">add</i>Registrar Bug
+            </a>
+        </div>
+    </div>
+
+    <h4 class="center-align">Bugs da Sessão</h4>
+    <h6 class="center-align" th:text="'Sessão: ' + ${sessionId}"></h6>
+
+    <div th:if="${message}" class="card-panel teal lighten-2 white-text center-align" style="margin-top: 20px; padding: 10px;">
+        <p th:text="${message}" style="margin: 0;"></p>
+    </div>
+
+    <table class="highlight responsive-table" style="margin-top: 20px;">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Descrição</th>
+            <th>Data de Registro</th>
+            <th th:if="${sessionStatus.name() == 'IN_PROGRESS'}">Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="bug : ${bugs}">
+            <td th:text="${bug.id}">ID</td>
+            <td th:text="${bug.description}">Descrição</td>
+            <td th:text="${#temporals.format(bug.createdAt, 'dd/MM/yyyy HH:mm')}">Data</td>
+            <td th:if="${sessionStatus.name() == 'IN_PROGRESS'}">
+                <a th:href="@{/sessions/{sessionId}/bugs/{bugId}/edit(sessionId=${sessionId}, bugId=${bug.id})}" class="btn-small orange">
+                    <i class="material-icons">edit</i>
+                </a>
+                <form th:action="@{/sessions/{sessionId}/bugs/{bugId}/delete(sessionId=${sessionId}, bugId=${bug.id})}" method="post" style="display:inline;">
+                    <button type="submit" class="btn-small red" onclick="return confirm('Deseja deletar este bug?')">
+                        <i class="material-icons">delete</i>
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>

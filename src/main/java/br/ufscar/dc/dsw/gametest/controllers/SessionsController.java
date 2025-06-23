@@ -3,10 +3,9 @@ package br.ufscar.dc.dsw.gametest.controllers;
 import br.ufscar.dc.dsw.gametest.entities.ProjectEntity;
 import br.ufscar.dc.dsw.gametest.entities.SessionsEntity;
 import br.ufscar.dc.dsw.gametest.entities.StrategyEntity;
+import br.ufscar.dc.dsw.gametest.entities.UserEntity;
+import br.ufscar.dc.dsw.gametest.repositories.*;
 import br.ufscar.dc.dsw.gametest.enums.SessionState;
-import br.ufscar.dc.dsw.gametest.repositories.ProjectRepository;
-import br.ufscar.dc.dsw.gametest.repositories.SessionRepository;
-import br.ufscar.dc.dsw.gametest.repositories.StrategyRepository;
 import br.ufscar.dc.dsw.gametest.utils.MockedSessionDependencies;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -27,12 +26,17 @@ public class SessionsController {
     private final SessionRepository sessionRepository;
     private final ProjectRepository projectRepository;
     private final StrategyRepository strategyRepository;
+    private final UserRepository userRepository;
 
-    public SessionsController(SessionRepository sessionRepository, MockedSessionDependencies mockedSessionDependencies, ProjectRepository projectRepository, StrategyRepository strategyRepository) {
+    public SessionsController(
+            SessionRepository sessionRepository,
+            ProjectRepository projectRepository,
+            StrategyRepository strategyRepository,
+            UserRepository userRepository) {
         this.sessionRepository = sessionRepository;
-
         this.projectRepository = projectRepository;
         this.strategyRepository = strategyRepository;
+        this.userRepository = userRepository;
     }
 
 
@@ -42,10 +46,10 @@ public class SessionsController {
         SessionsEntity session = sessionRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Sessão não encontrada: " + id));
 
-        model.addAttribute("sessionForm", session);          // reutiliza o mesmo *command object*
+        model.addAttribute("sessionForm", session);
         model.addAttribute("strategies", strategyRepository.findAll());
         model.addAttribute("projects",   projectRepository.findAll());
-        return "protected/session-form";                     // template único p/ create + edit
+        return "sessions/session-form";
     }
 
     // Salva as alterações
@@ -69,7 +73,7 @@ public class SessionsController {
             session.setEnded_at  (null);
         }
         sessionRepository.save(session);
-        return "redirect:/sessions";
+        return "redirect:sessions/sessions";
     }
 
     @GetMapping("/sessions")
@@ -78,13 +82,23 @@ public class SessionsController {
         List<SessionsEntity> sessions = sessionRepository.findAll();
         model.addAttribute("testSessions", sessions);
 
-        return "sessions";
+        return "sessions/sessions";
     }
 
     @GetMapping("/sessions/new")
-    public String newSession(Model model) {
+    public String newSession(Authentication authentication, Model model) {
+
+        boolean isAuthenticated = authentication != null && authentication.isAuthenticated();
+        UserEntity user = null;
+
+        if (isAuthenticated) {
+            String userEmail = authentication.getName();
+            user = userRepository.findByEmail(userEmail).orElseThrow(RuntimeException::new);
+        }
+
         List<StrategyEntity> strategies = strategyRepository.findAll();
-        List<ProjectEntity> projects = projectRepository.findAll();
+        assert user != null;
+        List<ProjectEntity> projects = projectRepository.findByMemberId(user.getId());
 
         model.addAttribute("strategies", strategies);
         model.addAttribute("projects", projects);
@@ -92,7 +106,7 @@ public class SessionsController {
         // Bind empty form
         model.addAttribute("sessionForm", new SessionsEntity());
 
-        return "protected/create-session";
+        return "sessions/create-session";
     }
 
 
@@ -113,7 +127,7 @@ public class SessionsController {
         session.setStatus(SessionState.CREATED);
 
         sessionRepository.save(session);
-        return "redirect:/sessions";
+        return "redirect:sessions/sessions";
     }
 
 
